@@ -240,7 +240,7 @@ class Algorithm():
                 self.delete_checkpoint(self.curr_epoch)
 
             if data_loader_test is not None:
-                eval_stats = self.evaluate(data_loader_test)
+                eval_stats = self.evaluate(data_loader_test, self.curr_epoch)
                 self.logger.info('==> Evaluation stats: %s' % (eval_stats))
                 self.keep_record_of_best_model(eval_stats, self.curr_epoch)
 
@@ -270,7 +270,7 @@ class Algorithm():
                 
         return train_stats.average()
 
-    def evaluate(self, dloader):
+    def evaluate(self, dloader, epoch=None):
         self.logger.info('Evaluating: %s' % os.path.basename(self.exp_dir))
         self.dloader = dloader
         self.dataset_eval = dloader.dataset
@@ -284,18 +284,21 @@ class Algorithm():
             self.biter = idx
             eval_stats_this = self.evaluation_step(batch)
             eval_stats.update(eval_stats_this)
-            if self.tf is not None:
-                self.tf.add_scalar("testing loss", eval_stats_this["loss"], idx)
-                try:
-                    self.tf.add_scalar("top1 acc@C1", eval_stats_this["prec1_c1"], idx)
-                    self.tf.add_scalar("top1 acc@C2", eval_stats_this["prec1_c2"], idx)
-                    self.tf.add_scalar("top1 acc@C3", eval_stats_this["prec1_c3"], idx)
-                    self.tf.add_scalar("top1 acc@C4", eval_stats_this["prec1_c4"], idx)
-                    self.tf.add_scalar("top1 acc@C5", eval_stats_this["prec1_c5"], idx)
-                except:
-                    print("Skip acc printing")
+            
+        if self.tf is not None and epoch is not None:
+            eval_avg = eval_stats.average()
+            self.tf.add_scalar("testing loss", eval_avg["loss"], epoch)
+            try:
+                self.tf.add_scalar("top1 acc@C1", eval_avg["prec1_c1"], epoch)
+                self.tf.add_scalar("top1 acc@C2", eval_avg["prec1_c2"], epoch)
+                self.tf.add_scalar("top1 acc@C3", eval_avg["prec1_c3"], epoch)
+                self.tf.add_scalar("top1 acc@C4", eval_avg["prec1_c4"], epoch)
+                self.tf.add_scalar("top1 acc@C5", eval_avg["prec1_c5"], epoch)
+            except:
+                self.tf.add_scalar("top1 acc", eval_avg["prec1"], epoch)
+                print("Skip more acc printing")
 
-        self.logger.info('==> Results: %s' % eval_stats.average())
+        self.logger.info('==> Evaluation Results: %s' % eval_stats.average())
 
         return eval_stats.average()
 

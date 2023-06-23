@@ -8,9 +8,9 @@ from dataloader import DataLoader, GenericDataset
 CUDA_VISIBLE_DEVICES=2
 
 parser = argparse.ArgumentParser()
-# parser.add_argument('--exp',         type=str, required=True, default='CIFAR10_RotNet_ResNet18',  help='config file with parameters of the experiment')
+parser.add_argument('--exp',         type=str, required=True, help='config file with parameters of the experiment')
 # parser.add_argument('--exp',         type=str, default='CIFAR10_RotNet_ResNet18',  help='config file with parameters of the experiment')
-parser.add_argument('--exp',         type=str, default='CIFAR100_LinearClassifiers_CIFAR10_RotNet_ResNet18_Features',  help='config file with parameters of the experiment')
+# parser.add_argument('--exp',         type=str, default='CIFAR100_LinearClassifiers_CIFAR10_RotNet_ResNet18_Features',  help='config file with parameters of the experiment')
 parser.add_argument('--evaluate',    default=False, action='store_true')
 parser.add_argument('--checkpoint',  type=int,      default=0,     help='checkpoint (epoch id) that will be loaded')
 parser.add_argument('--num_workers', type=int,      default=4,     help='number of data loading workers')
