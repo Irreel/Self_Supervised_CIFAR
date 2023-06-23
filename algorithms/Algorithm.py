@@ -286,7 +286,14 @@ class Algorithm():
             eval_stats.update(eval_stats_this)
             if self.tf is not None:
                 self.tf.add_scalar("testing loss", eval_stats_this["loss"], idx)
-                self.tf.add_scalar("top1 acc", eval_stats_this["prec1"], idx)
+                try:
+                    self.tf.add_scalar("top1 acc@C1", eval_stats_this["prec1_c1"], idx)
+                    self.tf.add_scalar("top1 acc@C2", eval_stats_this["prec1_c2"], idx)
+                    self.tf.add_scalar("top1 acc@C3", eval_stats_this["prec1_c3"], idx)
+                    self.tf.add_scalar("top1 acc@C4", eval_stats_this["prec1_c4"], idx)
+                    self.tf.add_scalar("top1 acc@C5", eval_stats_this["prec1_c5"], idx)
+                except:
+                    print("Skip acc printing")
 
         self.logger.info('==> Results: %s' % eval_stats.average())
 
